@@ -1,0 +1,6 @@
+@ChargeBackAuth_HostAddress = http://localhost:5033
+
+GET {{ChargeBackAuth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

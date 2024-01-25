@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "4MkK2K3dq9PTiHttUp9ISF0IEv/yP5hEB5dkNKfOHgw=",
+  "Source": "ChargeBackAuthApi",
+  "BasePath": "_content/ChargeBackAuthApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
