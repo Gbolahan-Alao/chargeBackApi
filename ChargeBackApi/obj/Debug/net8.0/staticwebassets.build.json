@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "Hash": "hTy+FXUjhK3xJeBecq/EW9uPzyMgIsPZK94B3R+6+SI=",
+  "Source": "ChargeBackApi",
+  "BasePath": "_content/ChargeBackApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\ChargeBackAuth\\ChargeBackAuthApi.csproj",
+      "Version": 2,
+      "Source": "ChargeBackAuthApi",
+      "GetPublishAssetsTargets": "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
