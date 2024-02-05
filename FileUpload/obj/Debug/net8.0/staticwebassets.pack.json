@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\FileUpload\\wwwroot\\uploads\\Logged 0102_20240205123720.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Logged 0102_20240205123720.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\FileUpload\\wwwroot\\uploads\\Logged 1901_20240205072602.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Logged 1901_20240205072602.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\FileUpload\\wwwroot\\uploads\\Logged 1901_20240205141502.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Logged 1901_20240205141502.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\FileUpload\\wwwroot\\uploads\\Logged 1912_20240205094149.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Logged 1912_20240205094149.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\FileUpload\\wwwroot\\uploads\\Pending 2112_20240205114522.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Pending 2112_20240205114522.xlsx"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.FileUpload.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.FileUpload.props",
+      "PackagePath": "build\\FileUpload.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.FileUpload.props",
+      "PackagePath": "buildMultiTargeting\\FileUpload.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.FileUpload.props",
+      "PackagePath": "buildTransitive\\FileUpload.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
