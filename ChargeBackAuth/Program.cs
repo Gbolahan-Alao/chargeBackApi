@@ -18,7 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 
-//starting
+//Add Database
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
@@ -26,7 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 //Add JWT Authentication
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()   
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager()
     .AddRoles<IdentityRole>();
