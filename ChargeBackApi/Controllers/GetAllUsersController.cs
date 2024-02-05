@@ -1,7 +1,8 @@
-﻿
-using ChargeBackAuthApi.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using ChargeBackAuthApi.Repositories;
-using Microsoft.AspNetCore.Mvc;
+
+using ChargeBackAuthApi.Data;
+
 
 
 namespace ChargeBackApi.Controllers

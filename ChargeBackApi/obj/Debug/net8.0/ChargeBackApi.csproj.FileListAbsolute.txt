@@ -72,6 +72,7 @@ C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debu
 C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debug\net8.0\ChargeBackApi.csproj.CoreCompileInputs.cache
 C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debug\net8.0\ChargeBackApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debug\net8.0\ChargeBackApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debug\net8.0\ChargeBackApi.sourcelink.json
 C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\alaog\source\repos\PolarisChargeBackAuthIdentity\ChargeBackApi\obj\Debug\net8.0\staticwebassets\msbuild.ChargeBackApi.Microsoft.AspNetCore.StaticWebAssets.props
