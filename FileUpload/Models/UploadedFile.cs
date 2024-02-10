@@ -17,6 +17,8 @@ namespace FileUpload.Models
 
   
         public ICollection<FileMetadata> FileMetadata { get; set; }
+        
+        
     }
 
 }

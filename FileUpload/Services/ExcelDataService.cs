@@ -9,15 +9,17 @@ namespace FileUpload.Services
 {
     public class ExcelDataService
     {
-        public IEnumerable<UploadedFile> ExtractDataFromExcel(string filePath)
+        public (IEnumerable<UploadedFile>, int) ExtractDataFromExcel(string filePath)
         {
             var uploadedData = new List<UploadedFile>();
+            int totalRows = 0;
 
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
                 var worksheet = package.Workbook.Worksheets.FirstOrDefault();
                 if (worksheet != null)
                 {
+                    totalRows = worksheet.Dimension.End.Row - 1; // Exclude header row
                     for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                     {
                         uploadedData.Add(new UploadedFile
@@ -34,24 +36,7 @@ namespace FileUpload.Services
                 }
             }
 
-            return uploadedData;
-        }
-
-        public int GetTotalItemsFromExcel(string filePath)
-        {
-            int totalItems = 0;
-
-            using (var package = new ExcelPackage(new FileInfo(filePath)))
-            {
-                var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-                if (worksheet != null)
-                {
-                    // Determine the total number of rows in the worksheet
-                    totalItems = worksheet.Dimension.End.Row - 1; // Exclude header row
-                }
-            }
-
-            return totalItems;
+            return (uploadedData, totalRows);
         }
     }
 }

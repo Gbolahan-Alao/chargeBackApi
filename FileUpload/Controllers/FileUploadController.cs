@@ -22,26 +22,7 @@ namespace FileUpload.Controllers
         }
 
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file)
-        {
-            try
-            {
-                if (file == null || file.Length == 0)
-                    return BadRequest("Invalid file");
-
-                // Upload the file and get the response message and filename
-                var (fileName, responseMessage) = await _fileUploadService.UploadFileAsync(file);
-
-                // Return the response message with filename as part of the OK response
-                return Ok(new { fileName, message = responseMessage });
-            }
-            catch (Exception ex)
-            {
-                // Return error message in case of exception
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+       
 
         [HttpGet("files")]
         public async Task<IActionResult> GetUploadedFiles()
@@ -57,7 +38,60 @@ namespace FileUpload.Controllers
             }
         }
 
-        [HttpPost("delete")]
+        [HttpGet("file-info")]
+        public async Task<IActionResult> GetUploadedFileInfo()
+        {
+            try
+            {
+                var fileInfo = await _databaseService.GetUploadedFileInfoAsync();
+                return Ok(fileInfo);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                    return BadRequest("Invalid file");
+
+                // Upload the file and get the response message and filename
+                var (fileName, responseMessage, skippedRowsCount, totalRows) = await _fileUploadService.UploadFileAsync(file);
+
+                // Return the response message with filename as part of the OK response
+                return Ok(new { fileName, message = responseMessage, skippedRowsCount });
+            }
+            catch (Exception ex)
+            {
+                // Return error message in case of exception
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("download/{fileName}")]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            try
+            {
+                var (fileBytes, downloadedFileName, skippedRowsCount) = await _fileUploadService.DownloadFileAsync(fileName);
+                return File(fileBytes, "application/octet-stream", downloadedFileName);
+            }
+            catch (FileNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
+
+        [HttpDelete("delete")]
         public async Task<IActionResult> DeleteFiles(List<int> fileIds)
         {
             try
@@ -71,7 +105,7 @@ namespace FileUpload.Controllers
             }
         }
 
-        [HttpPost("clear")]
+        [HttpDelete("clear")]
         public async Task<IActionResult> ClearUploadedData()
         {
             var result = await _databaseService.ClearUploadedData();
@@ -84,6 +118,33 @@ namespace FileUpload.Controllers
             {
                 return Ok(new { message = result });
             }
+        }
+
+        
+
+        [HttpPost("delete-all")]
+        public async Task<IActionResult> DeleteAllFileInfo()
+        {
+            try
+            {
+                // Call the method in DatabaseService to delete all file info
+                var result = await _databaseService.DeleteAllFileInfoAsync();
+
+                // Check if deletion was successful
+                if (result.StartsWith("An error occurred"))
+                {
+                    return BadRequest(new { message = result });
+                }
+                else
+                {
+                    return Ok(new { message = result });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
         }
     }
 }

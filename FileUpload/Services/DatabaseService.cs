@@ -22,6 +22,12 @@ namespace FileUpload.Services
             return await _dbContext.UploadedFiles.ToListAsync();
         }
 
+        public async Task<List<UploadedFileInfo>> GetUploadedFileInfoAsync()
+        {
+           
+            return await _dbContext.UploadedFileInfos.ToListAsync();
+        }
+
         public async Task DeleteUploadedFilesAsync(List<int> fileIds)
         {
             var filesToDelete = await _dbContext.UploadedFiles
@@ -54,6 +60,25 @@ namespace FileUpload.Services
             {
            
                 return $"An error occurred: {ex.Message}";
+            }
+        }
+
+        public async Task<string> DeleteAllFileInfoAsync()
+        {
+            try
+            {
+                
+                var fileInfoList = await _dbContext.UploadedFileInfos.ToListAsync();
+
+               
+                _dbContext.UploadedFileInfos.RemoveRange(fileInfoList);
+                await _dbContext.SaveChangesAsync();
+
+                return "All file info deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                return $"An error occurred while deleting file info: {ex.Message}";
             }
         }
     }

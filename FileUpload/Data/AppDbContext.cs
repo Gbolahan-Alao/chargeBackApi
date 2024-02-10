@@ -9,7 +9,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<UploadedFile> UploadedFiles { get; set; }
-    public DbSet<FileMetadata> FileMetadata { get; set; } // Add FileMetadata DbSet
+    public DbSet<UploadedFileInfo> UploadedFileInfos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
