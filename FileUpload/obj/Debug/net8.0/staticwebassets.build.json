@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "5AA/CTz7H7aQw4a6SaNqEd5f+Byjp8lxiDor+L1pEl8=",
+  "Source": "FileUpload",
+  "BasePath": "_content/FileUpload",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "FileUpload\\wwwroot",
+      "Source": "FileUpload",
+      "ContentRoot": "C:\\Users\\alaog\\Source\\Repos\\chargeBackApi\\FileUpload\\wwwroot\\",
+      "BasePath": "_content/FileUpload",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\alaog\\Source\\Repos\\chargeBackApi\\FileUpload\\wwwroot\\uploads\\Logged 1901.xlsx",
+      "SourceId": "FileUpload",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\alaog\\Source\\Repos\\chargeBackApi\\FileUpload\\wwwroot\\",
+      "BasePath": "_content/FileUpload",
+      "RelativePath": "uploads/Logged 1901.xlsx",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\Logged 1901.xlsx"
+    }
+  ]
+}
