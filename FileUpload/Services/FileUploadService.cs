@@ -1,16 +1,18 @@
 ﻿using FileUpload.Models;
+using FileUpload.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace FileUpload.Services
 {
-    public class FileUploadService
+    public class FileUploadService : IFileUploadService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly AppDbContext _dbContext;
@@ -22,7 +24,6 @@ namespace FileUpload.Services
             _dbContext = dbContext;
             _excelDataService = excelDataService;
         }
-
         public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file)
         {
             try
@@ -41,21 +42,64 @@ namespace FileUpload.Services
 
                 if (File.Exists(filePath))
                 {
-                    // Generate a unique filename by appending a timestamp
-                    var uniqueFileName = $"{fileName}_{DateTime.UtcNow.Ticks}{fileExtension}";
-                    filePath = Path.Combine(uploadsFolderPath, uniqueFileName);
+                    throw new Exception($"File '{fullFileName}' already exists. Please rename the file and try again.");
                 }
 
-                // Save the file to the uploads folder
+            
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
 
-                // Extract data from the uploaded Excel file
                 var (uploadedFiles, totalRows) = _excelDataService.ExtractDataFromExcel(filePath);
 
-                int skippedRowsCount = 0;
+                var distinctUploadedFiles = uploadedFiles.GroupBy(f => f.Stan).Select(g => g.First());
+
+                int skippedRowCount = 0;
+                foreach (var uploadedFile in distinctUploadedFiles)
+                {
+                    var existingStan = _dbContext.UploadedFiles.FirstOrDefault(f => f.Stan == uploadedFile.Stan);
+                    if (existingStan != null)
+                    {
+                        skippedRowCount++;
+                    }
+                    else
+                    {
+                        _dbContext.UploadedFiles.Add(uploadedFile);
+                    }
+                }
+
+                using (var package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                    if (worksheet != null)
+                    {
+                        worksheet.InsertColumn(8, 1); 
+                        worksheet.Cells[1, 8].Value = "Status";
+
+                    
+                        for (int row = 2; row <= totalRows + 1; row++)
+                        {
+                            var stan = worksheet.Cells[row, 1].Text;
+                            var existingStan = _dbContext.UploadedFiles.FirstOrDefault(f => f.Stan == stan);
+                            if (existingStan != null)
+                            {
+                                worksheet.Cells[row, 8].Value = "Failed";
+                            }
+                            else
+                            {
+                                worksheet.Cells[row, 8].Value = "Success";
+                            }
+                        }
+
+                        // Save changes to the Excel file
+                        package.Save();
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("The Excel file does not contain any worksheets.");
+                    }
+                }
 
                 UploadedFileInfo fileInfo = new UploadedFileInfo
                 {
@@ -65,26 +109,12 @@ namespace FileUpload.Services
                     FileUrl = filePath
                 };
 
-                foreach (var uploadedFile in uploadedFiles)
-                {
-                    var existingStan = _dbContext.UploadedFiles.FirstOrDefault(f => f.Stan == uploadedFile.Stan);
-                    if (existingStan != null)
-                    {
-                        skippedRowsCount++;
-                        continue;
-                    }
-
-                    _dbContext.UploadedFiles.Add(uploadedFile);
-                }
-
-
+                // Add UploadedFileInfo to context and save
                 _dbContext.UploadedFileInfos.Add(fileInfo);
-
-                // Save changes to the database
-                await _dbContext.SaveChangesAsync(); // Ensure changes are saved to the database
+                await _dbContext.SaveChangesAsync();
 
                 // Return upload success message with filename, skipped rows count, and total rows
-                return (Path.GetFileName(filePath), $"{fileName}{fileExtension} uploaded successfully", skippedRowsCount, totalRows);
+                return (Path.GetFileName(filePath), $"{fileName}{fileExtension} uploaded successfully", skippedRowCount, totalRows);
             }
             catch (Exception ex)
             {
@@ -95,13 +125,6 @@ namespace FileUpload.Services
             }
         }
 
-
-
-
-
-
-
-
         public async Task<IEnumerable<UploadedFileInfo>> GetUploadedFileInfoAsync()
         {
             try
@@ -111,7 +134,7 @@ namespace FileUpload.Services
                     .Select(filePath => new UploadedFileInfo
                     {
                         FileName = Path.GetFileName(filePath),
-                        TotalItems = GetTotalRowsInExcelFile(filePath), // Use the method to get total rows
+                        TotalItems = GetTotalRowsInExcelFile(filePath), 
                         UploadDate = File.GetCreationTimeUtc(filePath),
                         FileUrl = filePath
                     })
@@ -124,10 +147,6 @@ namespace FileUpload.Services
                 throw new Exception($"Error getting uploaded file info: {ex.Message}");
             }
         }
-
-
-
-
 
         private int GetTotalRowsInExcelFile(string filePath)
         {
@@ -143,7 +162,7 @@ namespace FileUpload.Services
                     }
                     else
                     {
-                        return 14;
+                        return 0;
                     }
                 }
             }
@@ -154,12 +173,9 @@ namespace FileUpload.Services
             }
         }
 
-
-
-
-
-
-        public async Task<(byte[], string, int)> DownloadFileAsync(string fileName)
+        // Inside the DownloadFileAsync method
+        // Inside the DownloadFileAsync method
+        public async Task<byte[]> DownloadFileAsync(string fileName)
         {
             try
             {
@@ -167,50 +183,54 @@ namespace FileUpload.Services
 
                 if (File.Exists(filePath))
                 {
+                    // Read the file bytes and return
                     var fileBytes = await File.ReadAllBytesAsync(filePath);
 
-                    using (var package = new ExcelPackage(new MemoryStream(fileBytes)))
+                    // Update status for each row based on the "Status" column value
+                    using (var package = new ExcelPackage(new FileInfo(filePath)))
                     {
                         var worksheet = package.Workbook.Worksheets.FirstOrDefault();
-
                         if (worksheet != null)
                         {
-                            int skippedRowsCount = 0; 
-                            int rowCount = worksheet.Dimension.End.Row;
-
-                          
-                            worksheet.Cells[1, 8].Value = "Status";
-
-
-                            for (int row = 2; row <= rowCount; row++)
+                            // Remove any existing "Status" columns
+                            var existingStatusColumns = worksheet.Cells["1:1"].Where(cell => cell.Text == "Status").ToList();
+                            foreach (var existingStatusColumn in existingStatusColumns)
                             {
-                                
-                                string stanValue = worksheet.Cells[row, 3]?.Value?.ToString();
+                                int columnIndex = existingStatusColumn.Start.Column;
+                                worksheet.DeleteColumn(columnIndex);
+                            }
 
-                             
-                                var existingStan = _dbContext.UploadedFiles.FirstOrDefault(f => f.Stan == stanValue);
+                            // Find the existing "Status" column index
+                            int statusColumnIndex = worksheet.Dimension?.End?.Column + 1 ?? 1;
+
+                            // Read the status for each row and set it in the downloaded file
+                            for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                            {
+                                var stan = worksheet.Cells[row, 1].Text;
+                                var existingStan = _dbContext.UploadedFiles.FirstOrDefault(f => f.Stan == stan);
                                 if (existingStan != null)
                                 {
-                                  
-                                    worksheet.Cells[row, 8].Value = "Success";
+                                    worksheet.Cells[row, statusColumnIndex].Value = "Failed";
                                 }
                                 else
                                 {
-                                    worksheet.Cells[row, 8].Value = "Failed";
-                                    skippedRowsCount++; // Increment skipped rows count
+                                    worksheet.Cells[row, statusColumnIndex].Value = "Success";
                                 }
                             }
 
-                            
-                            fileBytes = package.GetAsByteArray();
+                            // Set the header for the new "Status" column
+                            worksheet.Cells[1, statusColumnIndex].Value = "Status";
 
-                            return (fileBytes, fileName, skippedRowsCount);
+                            // Save changes to the Excel file
+                            package.Save();
                         }
                         else
                         {
                             throw new InvalidOperationException("The Excel file does not contain any worksheets.");
                         }
                     }
+
+                    return fileBytes;
                 }
                 else
                 {
@@ -219,16 +239,17 @@ namespace FileUpload.Services
             }
             catch (FileNotFoundException ex)
             {
-                throw ex; 
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw ex; 
+                throw;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error downloading file: {ex.Message}");
+                throw new Exception($"Error downloading file: {ex.Message}", ex);
             }
         }
+
+
+
+
+
     }
 }

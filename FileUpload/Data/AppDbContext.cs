@@ -10,6 +10,10 @@ public class AppDbContext : DbContext
 
     public DbSet<UploadedFile> UploadedFiles { get; set; }
     public DbSet<UploadedFileInfo> UploadedFileInfos { get; set; }
+    public DbSet<UploadedFileInfo> FairmoneyUploadedFile { get; set; }
+    public DbSet<UploadedFileInfo> PalmpayUploadedFile { get; set; }
+    public DbSet<UploadedFileInfo> TeamaptUploadedFile { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

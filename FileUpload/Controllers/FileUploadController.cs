@@ -77,8 +77,8 @@ namespace FileUpload.Controllers
         {
             try
             {
-                var (fileBytes, downloadedFileName, skippedRowsCount) = await _fileUploadService.DownloadFileAsync(fileName);
-                return File(fileBytes, "application/octet-stream", downloadedFileName);
+                var fileBytes = await _fileUploadService.DownloadFileAsync(fileName);
+                return File(fileBytes, "application/octet-stream", fileName);
             }
             catch (FileNotFoundException ex)
             {
@@ -89,6 +89,8 @@ namespace FileUpload.Controllers
                 return BadRequest(new { message = $"An error occurred: {ex.Message}" });
             }
         }
+
+
 
 
         [HttpDelete("delete")]
