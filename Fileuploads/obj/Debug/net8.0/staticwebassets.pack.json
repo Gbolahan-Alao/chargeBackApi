@@ -1,0 +1,37 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Palmpay\\Logged 0501.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Palmpay\\Logged 0501.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Teamapt\\Logged 1901 (1).xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Teamapt\\Logged 1901 (1).xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Teamapt\\Logged 1901 (2) (1).xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Teamapt\\Logged 1901 (2) (1).xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Teamapt\\Logged 1901.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Teamapt\\Logged 1901.xlsx"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Fileuploads.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Fileuploads.props",
+      "PackagePath": "build\\Fileuploads.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Fileuploads.props",
+      "PackagePath": "buildMultiTargeting\\Fileuploads.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Fileuploads.props",
+      "PackagePath": "buildTransitive\\Fileuploads.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
