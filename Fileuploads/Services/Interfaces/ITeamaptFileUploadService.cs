@@ -8,7 +8,7 @@ namespace Fileuploads.Services.Interfaces
 {
     public interface ITeamaptFileUploadService
     {
-        Task<(string, string, int, int)> UploadFileAsync(IFormFile file);
+        Task<(string, string, int, int)> UploadFileAsync(IFormFile file, string merchantId);
         Task<IEnumerable<TeamaptUploadedFilesInfo>> GetUploadedFileInfoAsync();
         Task<byte[]> DownloadFileAsync(string fileName);
     }

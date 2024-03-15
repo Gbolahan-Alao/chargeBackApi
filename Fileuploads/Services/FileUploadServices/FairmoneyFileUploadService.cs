@@ -24,7 +24,7 @@ namespace Fileuploads.Services.FileUploadServices
             _excelDataService = excelDataService;
         }
 
-        public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file)
+        public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file, string merchantId)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace Fileuploads.Services.FileUploadServices
                     await file.CopyToAsync(stream);
                 }
 
-                var (uploadedFiles, totalRows) = _excelDataService.ExtractDataFromExcel(filePath);
+                var (uploadedFiles, totalRows) = _excelDataService.ExtractDataFromExcel(filePath, merchantId);
 
                 int skippedRowCount = 0;
                 foreach (var uploadedFile in uploadedFiles)

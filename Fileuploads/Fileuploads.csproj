@@ -25,9 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="wwwroot\uploads\Fairmoney\" />
-		<Folder Include="wwwroot\uploads\Palmpay\" />
-		<Folder Include="wwwroot\uploads\Teamapt\" />
+	  <Folder Include="wwwroot\uploads\" />
 	</ItemGroup>
 
 </Project>

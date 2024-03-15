@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Fileuploads.Controllers
 {
     [ApiController]
-    [Route("all-merchants")]
+    [Route("api")]
     public class FileController : ControllerBase
     {
         private readonly FileUploadService _fileUploadService;
@@ -25,15 +25,30 @@ namespace Fileuploads.Controllers
             
         }
 
-
-       
-
         [HttpGet("files")]
-        public async Task<IActionResult> GetUploadedFiles()
+        public async Task<IActionResult> GetUploadedFiles([FromQuery] List<string> userRoles)
         {
             try
             {
-                var uploadedFiles = await _databaseService.GetAllUploadedFilesAsync();
+                string merchantId = "";
+                foreach (var userRole in userRoles)
+                {
+                    switch (userRole)
+                    {
+                        case "polFairmoney":
+                            merchantId = "1234";
+                            break;
+                        case "polTeamapt":
+                            merchantId = "5678";
+                            break;
+                        case "polPalmpay":
+                            merchantId = "91011";
+                            break;
+                        default:
+                            throw new Exception("Invalid user role. Please provide a valid role.");
+                    }
+                }
+                var uploadedFiles = await _databaseService.GetAllUploadedFilesAsync(merchantId);
                 return Ok(uploadedFiles);
             }
             catch (Exception ex)
@@ -42,43 +57,82 @@ namespace Fileuploads.Controllers
             }
         }
 
-        
-
         [HttpGet("files-info")]
-        public async Task<IActionResult> GetUploadedFileInfo()
+        public async Task<IActionResult> GetUploadedFileInfo([FromQuery] List<string> userRoles)
         {
             try
             {
-                var fileInfo = await _databaseService.GetUploadedFileInfoAsync();
-                return Ok(fileInfo);
+                string merchantId = "";
+
+                foreach (var userRole in userRoles)
+                {
+                    switch (userRole)
+                    {
+                        case "polFairmoney":
+                            merchantId = "1234";
+                            break;
+                        case "polTeamapt":
+                            merchantId = "5678";
+                            break;
+                        case "polPalmpay":
+                            merchantId = "91011";
+                            break;
+                        default:
+                            throw new Exception("Invalid user role. Please provide a valid role.");
+                    }
+
+                    var fileInfo = await _databaseService.GetUploadedFileInfoAsync(merchantId);
+
+                    if (fileInfo != null)
+                        return Ok(fileInfo);
+                }
+                return NotFound();
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = $"An error occurred: {ex.Message}" });
             }
         }
+
+
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, string merchantId)
         {
             try
             {
                 if (file == null || file.Length == 0)
                     return BadRequest("Invalid file");
 
-                // Upload the file and get the response message and filename
-                var (fileName, responseMessage, skippedRowsCount, totalRows) = await _fileUploadService.UploadFileAsync(file);
+              
+                var (fileName, responseMessage, skippedRowsCount, totalRows) = await _fileUploadService.UploadFileAsync(file, merchantId);
 
-                // Return the response message with filename as part of the OK response
                 return Ok(new { fileName, message = responseMessage, skippedRowsCount });
             }
             catch (Exception ex)
             {
-                // Return error message in case of exception
+                
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-       
+        [HttpPost("updateUserActions")]
+        public async Task<IActionResult> UpdateUserActions([FromQuery] string merchantId, [FromQuery] string stan, [FromQuery] string rrn, [FromQuery] string action)
+        {
+            if (string.IsNullOrEmpty(merchantId) || string.IsNullOrEmpty(stan) || string.IsNullOrEmpty(rrn) || string.IsNullOrEmpty(action))
+            {
+                return BadRequest("Merchant ID, STAN, RRN, and action are required parameters.");
+            }
+            var result = await _fileUploadService.UpdateUserActionsAsync(merchantId, stan, rrn, action);
+
+            if (result)
+            {
+                return Ok("User action updated successfully.");
+            }
+            else
+            {
+                return NotFound("No matching record found or failed to update user action.");
+            }
+        }
 
         [HttpPost("download/{fileName}")]
         public async Task<IActionResult> DownloadFile(string fileName)
@@ -97,8 +151,6 @@ namespace Fileuploads.Controllers
                 return BadRequest(new { message = $"An error occurred: {ex.Message}" });
             }
         }
-
-
 
 
         [HttpDelete("delete")]
@@ -137,10 +189,10 @@ namespace Fileuploads.Controllers
         {
             try
             {
-                // Call the method in DatabaseService to delete all file info
+               
                 var result = await _databaseService.DeleteAllFileInfoAsync();
 
-                // Check if deletion was successful
+               
                 if (result.StartsWith("An error occurred"))
                 {
                     return BadRequest(new { message = result });

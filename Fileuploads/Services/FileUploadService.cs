@@ -24,15 +24,15 @@ namespace Fileuploads.Services
             _excelDataService = excelDataService;
         }
 
-        public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file)
+        public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file, string merchantId)
         {
             try
             {
+            
                 if (file == null || file.Length <= 0)
                 {
                     throw new Exception("File is empty or null.");
                 }
-
                 var fileName = Path.GetFileNameWithoutExtension(file.FileName);
                 var fileExtension = Path.GetExtension(file.FileName);
                 var fullFileName = $"{fileName}{fileExtension}";
@@ -50,34 +50,42 @@ namespace Fileuploads.Services
                     await file.CopyToAsync(stream);
                 }
 
-                // Extract data from Excel and check for duplicates
-                var (uploadedFiles, totalRows) = _excelDataService.ExtractDataFromExcel(filePath);
+                var (uploadedFiles, totalRows) = _excelDataService.ExtractDataFromExcel(filePath, merchantId);
                 var distinctUploadedFiles = uploadedFiles.GroupBy(f => f.Stan).Select(g => g.First());
 
                 int skippedRowCount = 0;
                 foreach (var uploadedFile in distinctUploadedFiles)
                 {
-                    // Check if the Stan already exists in the database
+                 
                     var existingStan = _dbContext.UploadedFiles.FirstOrDefault(f => f.Stan == uploadedFile.Stan);
                     if (existingStan != null)
                     {
                         skippedRowCount++;
-                        uploadedFile.Status = "Failed"; // Set status to failed for existing records
+                        uploadedFile.Status = "Failed"; 
                     }
                     else
                     {
-                        uploadedFile.Status = "Success"; // Set status to success for new records
+                        uploadedFile.Status = "Success"; 
                         _dbContext.UploadedFiles.Add(uploadedFile);
                     }
                 }
-                
-                // Save changes to the database
+               UploadedFileInfo fileInfo = new UploadedFileInfo
+                {
+                    FileName = fullFileName,
+                    TotalItems = totalRows,
+                    TotalSuccessful = totalRows - skippedRowCount,
+                    TotalFailed = skippedRowCount,
+                    UploadDate = DateTime.UtcNow,
+                    FileUrl = filePath,
+                    MerchantId= merchantId,
+                };
+                _dbContext.UploadedFileInfos.Add(fileInfo);
+
+               
                 await _dbContext.SaveChangesAsync();
                 AddAndUpdateStatusColumn(filePath);
-                // Add status column and update status in the Excel file
 
 
-                // Return upload success message with filename, skipped rows count, and total rows
                 return (Path.GetFileName(filePath), $"{fileName}{fileExtension} uploaded successfully", skippedRowCount, totalRows);
             }
             catch (Exception ex)
@@ -127,7 +135,7 @@ namespace Fileuploads.Services
 
                 if (File.Exists(filePath))
                 {
-                    // Read the file bytes
+                   
                     var fileBytes = await File.ReadAllBytesAsync(filePath);
 
                     return fileBytes;
@@ -156,7 +164,7 @@ namespace Fileuploads.Services
                     var worksheet = package.Workbook.Worksheets.FirstOrDefault();
                     if (worksheet != null)
                     {
-                        // Find the column index for "Stan"
+                        
                         int stanColumnIndex = -1;
                         for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
                         {
@@ -172,7 +180,7 @@ namespace Fileuploads.Services
                             throw new InvalidOperationException("Column 'Stan' not found in the Excel file.");
                         }
 
-                        // Check if the "Status" column already exists
+                     
                         int statusColumnIndex = -1;
                         for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
                         {
@@ -185,16 +193,15 @@ namespace Fileuploads.Services
 
                         if (statusColumnIndex == -1)
                         {
-                            // If "Status" column does not exist, add it
+                           
                             statusColumnIndex = worksheet.Dimension.End.Column + 1;
                             worksheet.Cells[1, statusColumnIndex].Value = "Status";
                         }
 
-                        // Read the status for each row and set it in the downloaded file
                         for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                         {
-                            var stanText = worksheet.Cells[row, stanColumnIndex].Text; // Retrieve value from "Stan" column
-                            var stan = Convert.ToInt32(stanText); // Convert to int
+                            var stanText = worksheet.Cells[row, stanColumnIndex].Text; 
+                            var stan = Convert.ToInt32(stanText); 
 
                             using (var dbContextTransaction = _dbContext.Database.BeginTransaction())
                             {
@@ -209,9 +216,6 @@ namespace Fileuploads.Services
                                     {
                                         worksheet.Cells[row, statusColumnIndex].Value = "Failed";
                                     }
-
-                                    // Save changes to the Excel file
-                                   
 
                                     dbContextTransaction.Commit();
                                 }
@@ -237,8 +241,27 @@ namespace Fileuploads.Services
             }
         }
 
+        public async Task<bool> UpdateUserActionsAsync(string merchantId, string stan, string rrn, string action)
+        {
+            try
+            {
+                var uploadedFile = await _dbContext.UploadedFiles.FirstOrDefaultAsync(f => f.MerchantId == merchantId && f.Stan == stan && f.Rrn == rrn);
 
-        private int GetTotalRowsInExcelFile(string filePath)
+                if (uploadedFile == null)
+                {
+                    return false;
+                }
+                uploadedFile.Action = action;
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating user action: {ex.Message}");
+                return false;
+            }
+        }
+         private int GetTotalRowsInExcelFile(string filePath)
         {
             try
             {

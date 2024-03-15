@@ -9,7 +9,7 @@ namespace Fileuploads.Services
 {
     public class ExcelDataService
     {
-        public (IEnumerable<UploadedFile>, int) ExtractDataFromExcel(string filePath)
+        public (IEnumerable<UploadedFile>, int) ExtractDataFromExcel(string filePath, string merchantId)
         {
             var uploadedData = new List<UploadedFile>();
             int totalRows = 0;
@@ -19,7 +19,11 @@ namespace Fileuploads.Services
                 var worksheet = package.Workbook.Worksheets.FirstOrDefault();
                 if (worksheet != null)
                 {
-                    totalRows = worksheet.Dimension.End.Row - 1; // Exclude header row
+                    totalRows = worksheet.Dimension.End.Row - 1; 
+
+                    // Adding the actions column
+                    worksheet.Cells[1, worksheet.Dimension.End.Column + 1].Value = "Actions";
+
                     for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                     {
                         uploadedData.Add(new UploadedFile
@@ -30,8 +34,11 @@ namespace Fileuploads.Services
                             TerminalId = worksheet.Cells[row, 4]?.Value?.ToString(),
                             TransactionDate = DateTime.Parse(worksheet.Cells[row, 5]?.Value?.ToString()),
                             Amount = decimal.Parse(worksheet.Cells[row, 6]?.Value?.ToString()),
-                            AccountToBeCredited = worksheet.Cells[row, 7]?.Value?.ToString()
+                            AccountToBeCredited = worksheet.Cells[row, 7]?.Value?.ToString(),
+                            MerchantId = merchantId,
+                            Action = "N/A" // I set N/A as the initial value"
                         });
+                        worksheet.Cells[row, worksheet.Dimension.End.Column].Value = "N/A";
                     }
                 }
             }

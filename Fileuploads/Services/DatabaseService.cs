@@ -1,4 +1,5 @@
-﻿using Fileuploads.Models;
+﻿using FileUpload.Migrations;
+using Fileuploads.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,37 +18,21 @@ namespace Fileuploads.Services
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<UploadedFile>> GetAllUploadedFilesAsync()
+        public async Task<IEnumerable<UploadedFile>> GetAllUploadedFilesAsync( string merchantId)
         {
-            return await _dbContext.UploadedFiles.ToListAsync();
+            return await _dbContext.UploadedFiles.Where(f => f.MerchantId == merchantId)
+            .ToListAsync();
         }
 
-        public async Task<IEnumerable<TeamaptUploadedFile>> GetAllTeamaptUploadedFilesAsync()
-        {
-            return await _dbContext.TeamaptUploadedFile.ToListAsync();
-        }
+       
 
-        public async Task<IEnumerable<FairmoneyUploadedFile>> GetAllFairmoneyUploadedFilesAsync()
-        {
-            return await _dbContext.FairmoneyUploadedFile.ToListAsync();
-        }
-
-        public async Task<IEnumerable<PalmpayUploadedFile>> GetAllPalmpayUploadedFilesAsync()
-        {
-            return await _dbContext.PalmpayUploadedFile.ToListAsync();
-        }
-
-        public async Task<List<UploadedFileInfo>> GetUploadedFileInfoAsync()
+        public async Task<List<UploadedFileInfo>> GetUploadedFileInfoAsync(string merchantId)
         {
            
-            return await _dbContext.UploadedFileInfos.ToListAsync();
+            return await _dbContext.UploadedFileInfos.Where(f=>f.MerchantId==merchantId).ToListAsync();
         }
 
-        public async Task<List<TeamaptUploadedFilesInfo>> GetTeamaptUploadedFileInfoAsync()
-        {
-
-            return await _dbContext.TeamaptUploadedFilesInfo.ToListAsync();
-        }
+      
 
         public async Task DeleteUploadedFilesAsync(List<int> fileIds)
         {
