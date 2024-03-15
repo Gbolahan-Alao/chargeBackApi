@@ -66,6 +66,17 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddScoped<IUserAccount, AccountRepository>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ClientPermission", policy =>
+    {
+        policy.AllowAnyHeader()
+            .AllowAnyMethod()
+            .SetIsOriginAllowed(_ => true)
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline. 
@@ -74,6 +85,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("ClientPermission");
 
 app.UseHttpsRedirection();
 

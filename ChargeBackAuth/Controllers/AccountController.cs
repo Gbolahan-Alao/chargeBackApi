@@ -1,5 +1,6 @@
 ﻿using ChargeBackAuthApi.Data;
 using ChargeBackAuthApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedClassLibrary.DTOs;
 
@@ -10,9 +11,10 @@ namespace ChargeBackAuthApi.Controllers
     public class AccountController(IUserAccount userAccount) : ControllerBase
     {
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserDTO userDTO)
+      //  [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Register(UserDTO userDTO, string merchant)
         {
-            var response = await userAccount.CreateAccount(userDTO);
+            var response = await userAccount.CreateAccount(userDTO,merchant );
             return Ok(response);
         }
 
@@ -24,11 +26,27 @@ namespace ChargeBackAuthApi.Controllers
         }
 
         [HttpGet("GetRegisteredUsers")]
+        
         public ActionResult<IEnumerable<ApplicationUser>> GetRegisteredUsers()
         {
             var users = userAccount.GetRegisteredUsers();
             return Ok(users);
         }
+
+        [HttpGet("{email}")]
+        
+        public async Task<IActionResult> GetUserRoles(string email)
+        {
+            var roles = await userAccount.GetUserRolesAsync(email);
+            if (!roles.Any())
+            {
+                return NotFound(new { message = "User not found or no roles assigned." });
+            }
+
+            return Ok(roles);
+        }
+
+
     }
 }
 
