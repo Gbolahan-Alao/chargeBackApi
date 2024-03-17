@@ -1,23 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Fileuploads.Models;
 
-public class AppDbContext : DbContext
+public class FileUploadDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
+    public FileUploadDbContext(DbContextOptions<FileUploadDbContext> options)
         : base(options)
     {
     }
 
     public DbSet<UploadedFile> UploadedFiles { get; set; }
     public DbSet<UploadedFileInfo> UploadedFileInfos { get; set; }
-    public DbSet<TeamaptUploadedFilesInfo> TeamaptUploadedFilesInfo { get; set; }
-    public DbSet<FairmoneyUploadedFilesInfo> FairmoneyUploadedFilesInfo { get; set; }
-    public DbSet<PalmpayUploadedFilesInfo> PalmpayUploadedFilesInfo { get; set; }
-
-    public DbSet<FairmoneyUploadedFile> FairmoneyUploadedFile { get; set; }
-
-    public DbSet<PalmpayUploadedFile> PalmpayUploadedFile { get; set; }
-    public DbSet<TeamaptUploadedFile> TeamaptUploadedFile { get; set; }
+    public DbSet<Merchant> Merchants { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

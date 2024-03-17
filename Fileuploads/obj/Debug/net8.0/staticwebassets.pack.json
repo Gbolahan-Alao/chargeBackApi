@@ -1,32 +1,12 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\24th logged.xlsx",
-      "PackagePath": "staticwebassets\\uploads\\24th logged.xlsx"
-    },
-    {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 0102.xlsx",
-      "PackagePath": "staticwebassets\\uploads\\Logged 0102.xlsx"
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 0501.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\Logged 0501.xlsx"
     },
     {
       "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901 (3).xlsx",
       "PackagePath": "staticwebassets\\uploads\\Logged 1901 (3).xlsx"
-    },
-    {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901 (4) (1) (1) (1) (1) (1) (1).xlsx",
-      "PackagePath": "staticwebassets\\uploads\\Logged 1901 (4) (1) (1) (1) (1) (1) (1).xlsx"
-    },
-    {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901 (4) (1) (1) (1).xlsx",
-      "PackagePath": "staticwebassets\\uploads\\Logged 1901 (4) (1) (1) (1).xlsx"
-    },
-    {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901 (4) (1) (1).xlsx",
-      "PackagePath": "staticwebassets\\uploads\\Logged 1901 (4) (1) (1).xlsx"
-    },
-    {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901 (4).xlsx",
-      "PackagePath": "staticwebassets\\uploads\\Logged 1901 (4).xlsx"
     },
     {
       "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901.xlsx",
@@ -37,16 +17,8 @@
       "PackagePath": "staticwebassets\\uploads\\Logged 1912.xlsx"
     },
     {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 2112.xlsx",
-      "PackagePath": "staticwebassets\\uploads\\Logged 2112.xlsx"
-    },
-    {
       "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 2912.xlsx",
       "PackagePath": "staticwebassets\\uploads\\Logged 2912.xlsx"
-    },
-    {
-      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Pending 2112.xlsx",
-      "PackagePath": "staticwebassets\\uploads\\Pending 2112.xlsx"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Fileuploads.Microsoft.AspNetCore.StaticWebAssets.props",

@@ -14,17 +14,17 @@ namespace Fileuploads.Services
     public class FileUploadService : IFileUploadService
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly AppDbContext _dbContext;
+        private readonly FileUploadDbContext _dbContext;
         private readonly ExcelDataService _excelDataService;
 
-        public FileUploadService(IWebHostEnvironment webHostEnvironment, AppDbContext dbContext, ExcelDataService excelDataService)
+        public FileUploadService(IWebHostEnvironment webHostEnvironment, FileUploadDbContext dbContext, ExcelDataService excelDataService)
         {
             _webHostEnvironment = webHostEnvironment;
             _dbContext = dbContext;
             _excelDataService = excelDataService;
         }
 
-        public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file, string merchantId)
+        public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file, String merchantId)
         {
             try
             {
@@ -97,33 +97,35 @@ namespace Fileuploads.Services
             }
         }
 
-        public async Task<IEnumerable<UploadedFileInfo>> GetUploadedFileInfoAsync()
+        public async Task<IEnumerable<UploadedFileInfo>> GetUploadedFileInfoAsync(String merchantId)
         {
             try
             {
                 var uploadsFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
-                var uploadedFiles = Directory.GetFiles(uploadsFolderPath)
+                var allFiles = Directory.GetFiles(uploadsFolderPath);
+                var filesForMerchant = allFiles
                     .Select(filePath => new UploadedFileInfo
                     {
                         FileName = Path.GetFileName(filePath),
                         TotalItems = GetTotalRowsInExcelFile(filePath),
                         UploadDate = File.GetCreationTimeUtc(filePath),
-                        FileUrl = filePath
+                        FileUrl = filePath,
+                        MerchantId = merchantId 
                     });
-
-                foreach (var uploadedFile in uploadedFiles)
+                foreach (var uploadedFile in filesForMerchant)
                 {
                     _dbContext.UploadedFileInfos.Add(uploadedFile);
                 }
                 await _dbContext.SaveChangesAsync();
 
-                return uploadedFiles;
+                return filesForMerchant;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Error getting/uploading file info: {ex.Message}", ex);
             }
         }
+
 
 
 
@@ -241,7 +243,7 @@ namespace Fileuploads.Services
             }
         }
 
-        public async Task<bool> UpdateUserActionsAsync(string merchantId, string stan, string rrn, string action)
+        public async Task<bool> UpdateUserActionsAsync(String merchantId, string stan, string rrn, string action)
         {
             try
             {
@@ -261,7 +263,26 @@ namespace Fileuploads.Services
                 return false;
             }
         }
-         private int GetTotalRowsInExcelFile(string filePath)
+
+        public async Task<string> GetUserActionAsync(String merchantId, string stan, string rrn)
+        {
+            try
+            {
+                var uploadedFile = await _dbContext.UploadedFiles.FirstOrDefaultAsync(f => f.MerchantId == merchantId && f.Stan == stan && f.Rrn == rrn);
+                if (uploadedFile != null)
+                {
+                    return uploadedFile.Action;
+                }
+                return null; // Return null if no matching record found
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching user action: {ex.Message}");
+                return null;
+            }
+        }
+
+        private int GetTotalRowsInExcelFile(string filePath)
         {
             try
             {

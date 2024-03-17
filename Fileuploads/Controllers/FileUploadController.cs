@@ -1,4 +1,5 @@
-﻿using Fileuploads.Models;
+﻿using FileUpload.Migrations;
+using Fileuploads.Models;
 using Fileuploads.Services;
 using Fileuploads.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -25,29 +26,25 @@ namespace Fileuploads.Controllers
             
         }
 
-        [HttpGet("files")]
-        public async Task<IActionResult> GetUploadedFiles([FromQuery] List<string> userRoles)
+        [HttpGet("all-files")]
+        public async Task<IActionResult> GetAllUploadedFiles()
         {
             try
             {
-                string merchantId = "";
-                foreach (var userRole in userRoles)
-                {
-                    switch (userRole)
-                    {
-                        case "polFairmoney":
-                            merchantId = "1234";
-                            break;
-                        case "polTeamapt":
-                            merchantId = "5678";
-                            break;
-                        case "polPalmpay":
-                            merchantId = "91011";
-                            break;
-                        default:
-                            throw new Exception("Invalid user role. Please provide a valid role.");
-                    }
-                }
+                var uploadedFiles = await _databaseService.GetAllFilesAsync();
+                return Ok(uploadedFiles);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("files")]
+        public async Task<IActionResult> GetUploadedFiles([FromQuery] String merchantId)
+        {
+            try
+            {
                 var uploadedFiles = await _databaseService.GetAllUploadedFilesAsync(merchantId);
                 return Ok(uploadedFiles);
             }
@@ -57,36 +54,49 @@ namespace Fileuploads.Controllers
             }
         }
 
-        [HttpGet("files-info")]
-        public async Task<IActionResult> GetUploadedFileInfo([FromQuery] List<string> userRoles)
+        [HttpGet("dashboard-data")]
+        public async Task<IActionResult> GetDashboardData()
         {
             try
             {
-                string merchantId = "";
+                var dashboardData = await _databaseService.GetDashboardData();
+                return Ok(dashboardData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
 
-                foreach (var userRole in userRoles)
+        [HttpGet("merchant-dashboard-data")]
+        public async Task<IActionResult> GetMerchantDashboardData([FromQuery] String merchantId)
+        {
+            try
+            {
+                var dashboardData = await _databaseService.GetMerchantDashboardData(merchantId);
+                return Ok(dashboardData);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
+        [HttpGet("files-info")]
+        public async Task<IActionResult> GetUploadedFileInfo([FromQuery] String merchantId)
+        {
+            try
+            {
+                var fileInfo = await _databaseService.GetUploadedFileInfoAsync(merchantId);
+
+                if (fileInfo != null)
                 {
-                    switch (userRole)
-                    {
-                        case "polFairmoney":
-                            merchantId = "1234";
-                            break;
-                        case "polTeamapt":
-                            merchantId = "5678";
-                            break;
-                        case "polPalmpay":
-                            merchantId = "91011";
-                            break;
-                        default:
-                            throw new Exception("Invalid user role. Please provide a valid role.");
-                    }
-
-                    var fileInfo = await _databaseService.GetUploadedFileInfoAsync(merchantId);
-
-                    if (fileInfo != null)
-                        return Ok(fileInfo);
+                    return Ok(fileInfo);
                 }
-                return NotFound();
+                else
+                {
+                    return NotFound();
+                }
             }
             catch (Exception ex)
             {
@@ -95,15 +105,15 @@ namespace Fileuploads.Controllers
         }
 
 
+
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file, string merchantId)
+        public async Task<IActionResult> UploadFile(IFormFile file, String merchantId)
         {
             try
             {
                 if (file == null || file.Length == 0)
                     return BadRequest("Invalid file");
 
-              
                 var (fileName, responseMessage, skippedRowsCount, totalRows) = await _fileUploadService.UploadFileAsync(file, merchantId);
 
                 return Ok(new { fileName, message = responseMessage, skippedRowsCount });
@@ -116,23 +126,56 @@ namespace Fileuploads.Controllers
         }
 
         [HttpPost("updateUserActions")]
-        public async Task<IActionResult> UpdateUserActions([FromQuery] string merchantId, [FromQuery] string stan, [FromQuery] string rrn, [FromQuery] string action)
+        public async Task<IActionResult> UpdateUserActions([FromQuery] String merchantId, [FromQuery] string stan, [FromQuery] string rrn, [FromQuery] string action)
         {
-            if (string.IsNullOrEmpty(merchantId) || string.IsNullOrEmpty(stan) || string.IsNullOrEmpty(rrn) || string.IsNullOrEmpty(action))
+            try
             {
-                return BadRequest("Merchant ID, STAN, RRN, and action are required parameters.");
-            }
-            var result = await _fileUploadService.UpdateUserActionsAsync(merchantId, stan, rrn, action);
+                if (merchantId == String.Empty || string.IsNullOrEmpty(stan) || string.IsNullOrEmpty(rrn) || string.IsNullOrEmpty(action))
+                {
+                    return BadRequest("Merchant ID, STAN, RRN, and action are required parameters.");
+                }
+                var result = await _fileUploadService.UpdateUserActionsAsync(merchantId, stan, rrn, action);
 
-            if (result)
-            {
-                return Ok("User action updated successfully.");
+                if (result)
+                {
+                    return Ok("User action updated successfully.");
+                }
+                else
+                {
+                    return NotFound("No matching record found or failed to update user action.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound("No matching record found or failed to update user action.");
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
             }
         }
+
+        [HttpGet("getUserAction")]
+        public async Task<IActionResult> GetUserAction([FromQuery] String merchantId, [FromQuery] string stan, [FromQuery] string rrn)
+        {
+            try
+            {
+                if (merchantId == String.Empty || string.IsNullOrEmpty(stan) || string.IsNullOrEmpty(rrn))
+                {
+                    return BadRequest("Merchant ID, STAN, and RRN are required parameters.");
+                }
+                var action = await _fileUploadService.GetUserActionAsync(merchantId, stan, rrn);
+                if (action != null)
+                {
+                    return Ok(action);
+                }
+                else
+                {
+                    return NotFound("No matching record found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
 
         [HttpPost("download/{fileName}")]
         public async Task<IActionResult> DownloadFile(string fileName)

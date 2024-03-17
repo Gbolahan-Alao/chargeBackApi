@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileUpload.Migrations
 {
     [DbContext(typeof(FileUploadDbContext))]
-    [Migration("20240206131651_FileUploadInfo")]
-    partial class FileUploadInfo
+    [Migration("20240315221459_Merchants")]
+    partial class Merchants
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace FileUpload.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FileUpload.Models.FileMetadata", b =>
+            modelBuilder.Entity("Fileuploads.Models.FileMetadata", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,25 @@ namespace FileUpload.Migrations
                     b.ToTable("FileMetadata");
                 });
 
-            modelBuilder.Entity("FileUpload.Models.UploadedFile", b =>
+            modelBuilder.Entity("Fileuploads.Models.Merchant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SerialNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Merchants");
+                });
+
+            modelBuilder.Entity("Fileuploads.Models.UploadedFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,10 +86,18 @@ namespace FileUpload.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("MaskedPan")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MerchantId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -80,6 +106,10 @@ namespace FileUpload.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Stan")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -95,7 +125,7 @@ namespace FileUpload.Migrations
                     b.ToTable("UploadedFiles");
                 });
 
-            modelBuilder.Entity("FileUpload.Models.UploadedFileInfo", b =>
+            modelBuilder.Entity("Fileuploads.Models.UploadedFileInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -111,7 +141,17 @@ namespace FileUpload.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MerchantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalFailed")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotalItems")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalSuccessful")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UploadDate")
@@ -122,9 +162,9 @@ namespace FileUpload.Migrations
                     b.ToTable("UploadedFileInfos");
                 });
 
-            modelBuilder.Entity("FileUpload.Models.FileMetadata", b =>
+            modelBuilder.Entity("Fileuploads.Models.FileMetadata", b =>
                 {
-                    b.HasOne("FileUpload.Models.UploadedFile", "UploadedFile")
+                    b.HasOne("Fileuploads.Models.UploadedFile", "UploadedFile")
                         .WithMany("FileMetadata")
                         .HasForeignKey("UploadedFileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -133,7 +173,7 @@ namespace FileUpload.Migrations
                     b.Navigation("UploadedFile");
                 });
 
-            modelBuilder.Entity("FileUpload.Models.UploadedFile", b =>
+            modelBuilder.Entity("Fileuploads.Models.UploadedFile", b =>
                 {
                     b.Navigation("FileMetadata");
                 });

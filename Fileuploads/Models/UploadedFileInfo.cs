@@ -7,7 +7,7 @@
         public int TotalItems { get; set; }
         public DateTime UploadDate { get; set; }
         public string FileUrl { get; set; }
-        public string MerchantId { get; set; }
+        public String MerchantId { get; set; }
         public int TotalFailed { get; set; }
         public int TotalSuccessful {  get; set; }    
     }

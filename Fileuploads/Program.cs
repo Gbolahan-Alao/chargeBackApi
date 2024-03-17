@@ -1,6 +1,4 @@
 using Fileuploads.Services;
-using Fileuploads.Services.DatabaseServices;
-using Fileuploads.Services.FileUploadServices;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 
@@ -10,19 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<FileUploadDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection")
         ?? throw new InvalidOperationException("Connection string is not found"));
 });
 
 builder.Services.AddScoped<FileUploadService>();
-builder.Services.AddScoped<TeamaptFileUploadService>();
-builder.Services.AddScoped<PalmpayDatabaseServices>();
-builder.Services.AddScoped<TeamaptDatabaseServices>();
-builder.Services.AddScoped<FairmoneyDatabaseServices>();
-builder.Services.AddScoped<PalmpayFileUploadService>();
-builder.Services.AddScoped<FairmoneyFileUploadService>();
+builder.Services.AddScoped<IMerchantService, MerchantService>();
 builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddScoped<ExcelDataService>();
 

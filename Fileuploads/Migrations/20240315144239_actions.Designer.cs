@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FileUpload.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(FileUploadDbContext))]
     [Migration("20240315144239_actions")]
     partial class actions
     {

@@ -15,7 +15,7 @@ namespace Fileuploads.Models
         public decimal Amount { get; set; }
         public string AccountToBeCredited { get; set; }
         public string Status { get; set; }
-        public string MerchantId {  get; set; }
+        public String MerchantId {  get; set; }
         public string Action { get; set; }
         public ICollection<FileMetadata> FileMetadata { get; set; }
         

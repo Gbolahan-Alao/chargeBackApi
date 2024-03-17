@@ -9,7 +9,7 @@ namespace Fileuploads.Services
 {
     public class ExcelDataService
     {
-        public (IEnumerable<UploadedFile>, int) ExtractDataFromExcel(string filePath, string merchantId)
+        public (IEnumerable<UploadedFile>, int) ExtractDataFromExcel(string filePath, String merchantId)
         {
             var uploadedData = new List<UploadedFile>();
             int totalRows = 0;

@@ -1,40 +1,54 @@
 ﻿using Fileuploads.Models;
+using Fileuploads.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace Fileuploads.Controllers
 {
-    public class MerchantController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class MerchantsController : ControllerBase
     {
+        private readonly IMerchantService _merchantService;
 
-        private static List<Merchant> _merchants = new List<Merchant>
-    {
-        new Merchant { Id = Guid.NewGuid(), SerialNumber = 1, Name = "Team APT" },
-        new Merchant { Id = Guid.NewGuid(), SerialNumber = 2, Name = "Fair Money" },
-        new Merchant { Id = Guid.NewGuid(), SerialNumber = 3, Name = "Palmpay" }
-    };
-
-        [HttpGet]
-        public IActionResult GetMerchants()
+        public MerchantsController(IMerchantService merchantService)
         {
-            return Ok(_merchants);
+            _merchantService = merchantService;
         }
 
-        [HttpPost]
-        public IActionResult AddMerchant(Merchant merchant)
+        [HttpGet]
+        public async Task<IActionResult> GetMerchants()
         {
-            merchant.Id = Guid.NewGuid();
-            _merchants.Add(merchant);
-            return CreatedAtAction(nameof(GetMerchantById), new { id = merchant.Id }, merchant);
+            var merchants = await _merchantService.GetMerchantsAsync();
+            return Ok(merchants);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetMerchantById(Guid id)
+        public async Task<IActionResult> GetMerchantById(Guid id)
         {
-            var merchant = _merchants.FirstOrDefault(m => m.Id == id);
+            var merchant = await _merchantService.GetMerchantByIdAsync(id);
             if (merchant == null)
                 return NotFound();
 
             return Ok(merchant);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMerchant(Merchant merchant)
+        {
+            var createdMerchant = await _merchantService.CreateMerchantAsync(merchant);
+            return CreatedAtAction(nameof(GetMerchantById), new { id = createdMerchant.Id }, createdMerchant);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMerchant(Guid id)
+        {
+            var result = await _merchantService.DeleteMerchantAsync(id);
+            if (!result)
+                return NotFound(); 
+
+            return NoContent(); 
         }
     }
 }
