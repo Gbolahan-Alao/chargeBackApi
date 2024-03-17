@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChargeBackAuthApi.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(FileUploadDbContext))]
     [Migration("20240116055133_First")]
     partial class First
     {

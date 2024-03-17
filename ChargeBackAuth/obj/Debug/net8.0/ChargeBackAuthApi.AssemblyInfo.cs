@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ChargeBackAuthApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6c2a0f267f1b85a51fec31b41a2869e472b2687b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fac157983617dc80f6889bdb12c09808053fc364")]
 [assembly: System.Reflection.AssemblyProductAttribute("ChargeBackAuthApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ChargeBackAuthApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SharedClassLibrary.DTOs;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -23,47 +24,35 @@ namespace ChargeBackAuthApi.Repositories
         private readonly IConfiguration _config;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly FileUploadDbContext _dbContext;
 
-        public AccountRepository(IConfiguration config, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AccountRepository(IConfiguration config, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, FileUploadDbContext dbContext)
         {
             _config = config;
             _userManager = userManager;
             _roleManager = roleManager;
+            _dbContext = dbContext;
         }
-
-        public async Task<GeneralResponse> CreateAccount(UserDTO UserDTO, string merchant)
+        public async Task<GeneralResponse> CreateAccount(UserDTO UserDTO, string merchantId)
         {
             if (UserDTO is null)
                 return new GeneralResponse(false, "Modal is empty", "");
 
-            if (string.IsNullOrWhiteSpace(merchant))
-                return new GeneralResponse(false, "Merchant is required", "");
+            if (string.IsNullOrWhiteSpace(merchantId))
+                return new GeneralResponse(false, "Merchant ID is required", "");
 
-            string merchantId;
-            switch (merchant)
-            {
-                case "polFairmoney":
-                    merchantId = "1234";
-                    break;
-                case "polTeamapt":
-                    merchantId = "5678";
-                    break;
-                case "polPalmpay":
-                    merchantId = "91011";
-                    break;
-                case "polaris": 
-                    merchantId = "0000";
-                    break;
-                default:
-                    throw new Exception("Invalid merchant name. Please enter a valid merchant name.");
-            }
+            // Fetch the merchant entity using the provided merchantId
+            var merchant = await _dbContext.Merchants.FirstOrDefaultAsync(m => m.Id.ToString() == merchantId);
+
+            if (merchant == null)
+                return new GeneralResponse(false, "Merchant not found", "");
 
             var newUser = new ApplicationUser()
             {
                 Name = UserDTO.Name,
                 Email = UserDTO.Email,
                 UserName = UserDTO.Email,
-                MerchantId = merchantId 
+                MerchantId = merchantId // Associate the user with the merchant using the provided merchantId
             };
 
             var user = await _userManager.FindByEmailAsync(newUser.Email);
@@ -77,15 +66,18 @@ namespace ChargeBackAuthApi.Repositories
                 return new GeneralResponse(false, errorMessage, "Error Occurred, Please try again");
             }
 
-            var role = await _roleManager.FindByNameAsync(merchant);
+            // Assign the merchant role based on the fetched merchant name
+            var roleName = merchant.Name;
+            var role = await _roleManager.FindByNameAsync(roleName);
             if (role is null)
             {
-                await _roleManager.CreateAsync(new IdentityRole() { Name = merchant });
+                await _roleManager.CreateAsync(new IdentityRole() { Name = roleName });
             }
 
-            await _userManager.AddToRoleAsync(newUser, merchant);
+            await _userManager.AddToRoleAsync(newUser, roleName);
 
-            if (merchant.ToLower() == "polaris")
+            // Check if the user's merchant is "Polaris" and assign the "Admin" role
+            if (roleName.ToLower() == "polaris bank")
             {
                 var adminRoleExists = await _roleManager.RoleExistsAsync("Admin");
                 if (!adminRoleExists)
@@ -95,19 +87,15 @@ namespace ChargeBackAuthApi.Repositories
 
                 await _userManager.AddToRoleAsync(newUser, "Admin");
             }
-            else
-            {
-                var userRoleExists = await _roleManager.RoleExistsAsync("User");
-                if (!userRoleExists)
-                {
-                    await _roleManager.CreateAsync(new IdentityRole("User"));
-                }
 
-                await _userManager.AddToRoleAsync(newUser, "User");
-            }
-
-            return new GeneralResponse(true, "Account Created", "");
+            // Return success message with the merchant name
+            return new GeneralResponse(true, $"User for {merchant.Name} successfully created", "");
         }
+
+      
+
+
+
 
         public async Task<LoginResponse> LoginAccount(LoginDTO LoginDTO)
         {
@@ -124,18 +112,16 @@ namespace ChargeBackAuthApi.Repositories
 
             var getUserRole = await _userManager.GetRolesAsync(getUser);
 
-            string merchant = getUserRole.FirstOrDefault();
-            if (string.IsNullOrEmpty(merchant))
-                return new LoginResponse(false, null!, "User has no assigned merchant role");
-            var userRoles = await _userManager.GetRolesAsync(getUser);
+            string merchantId = getUser.MerchantId; // Retrieve the merchant ID from the user
+            IEnumerable<string> roles = getUserRole; // Retrieve the roles of the user
 
-            var userSession = new UserSession(getUser.Id, getUser.Name, getUser.Email,userRoles);
+            var userSession = new UserSession(getUser.Id, getUser.Name, getUser.Email, roles);
 
-            string token = GenerateToken(userSession);
+            string token = GenerateToken(userSession, merchantId, roles);
             return new LoginResponse(true, token!, "Login completed");
         }
 
-        private string GenerateToken(UserSession user)
+        private string GenerateToken(UserSession user, string merchantId, IEnumerable<string> roles)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -144,12 +130,13 @@ namespace ChargeBackAuthApi.Repositories
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id),
         new Claim(ClaimTypes.Name, user.Name),
-        new Claim(ClaimTypes.Email, user.Email)
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim("MerchantId", merchantId) // Add the merchant ID as a custom claim
     };
 
-            foreach (var role in user.Roles)
+            foreach (var role in roles)
             {
-                userClaims.Add(new Claim(ClaimTypes.Role, role));
+                userClaims.Add(new Claim(ClaimTypes.Role, role)); // Add each role as a claim
             }
 
             var token = new JwtSecurityToken(
@@ -158,9 +145,11 @@ namespace ChargeBackAuthApi.Repositories
                 claims: userClaims,
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials
-                );
+            );
+
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
 
         public IEnumerable<ApplicationUser> GetRegisteredUsers()
         {

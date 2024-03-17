@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChargeBackAuthApi.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(FileUploadDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

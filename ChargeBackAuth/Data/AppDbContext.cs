@@ -3,7 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChargeBackAuthApi.Data
 {
-    public class AppDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser>(options)
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
     }
 }

@@ -11,10 +11,10 @@ namespace ChargeBackAuthApi.Controllers
     public class AccountController(IUserAccount userAccount) : ControllerBase
     {
         [HttpPost("register")]
-      //  [Authorize(Roles = "Admin")]
+        //  [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Register(UserDTO userDTO, string merchant)
         {
-            var response = await userAccount.CreateAccount(userDTO,merchant );
+            var response = await userAccount.CreateAccount(userDTO, merchant);
             return Ok(response);
         }
 

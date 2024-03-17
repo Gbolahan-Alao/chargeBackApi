@@ -1,5 +1,6 @@
 using ChargeBackAuthApi.Data;
 using ChargeBackAuthApi.Repositories;
+using Fileuploads.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("Connection string is not found"));
+});
+
+builder.Services.AddDbContext<FileUploadDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("UploadedFilesDbConnection")
+        ?? throw new InvalidOperationException("UploadedFilesDb connection string is not found"));
 });
 
 //Add JWT Authentication
@@ -65,6 +72,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddScoped<IUserAccount, AccountRepository>();
+builder.Services.AddScoped<IMerchantService, MerchantService>();
 
 builder.Services.AddCors(options =>
 {

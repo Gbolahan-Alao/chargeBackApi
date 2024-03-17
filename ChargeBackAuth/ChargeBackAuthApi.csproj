@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Fileuploads\Fileuploads.csproj" />
     <ProjectReference Include="..\SharedClassLibrary\SharedClassLibrary.csproj" />
   </ItemGroup>
 
