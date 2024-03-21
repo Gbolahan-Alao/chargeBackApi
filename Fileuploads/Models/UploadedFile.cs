@@ -7,6 +7,7 @@ namespace Fileuploads.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public DateTime DateLogged { get; set; }
         public string MaskedPan { get; set; }
         public string Rrn { get; set; }
         public string Stan { get; set; }
@@ -17,6 +18,7 @@ namespace Fileuploads.Models
         public string Status { get; set; }
         public String MerchantId {  get; set; }
         public string Action { get; set; }
+        public string? ReceiptFilePath { get; set; }
         public ICollection<FileMetadata> FileMetadata { get; set; }
         
         

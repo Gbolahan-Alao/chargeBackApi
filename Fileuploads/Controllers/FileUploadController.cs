@@ -18,11 +18,13 @@ namespace Fileuploads.Controllers
         private readonly FileUploadService _fileUploadService;
        
         private readonly DatabaseService _databaseService;
+        private readonly UploadReceiptService _receiptService;
 
-        public FileController(FileUploadService fileUploadService,  DatabaseService databaseService )
+        public FileController(FileUploadService fileUploadService,  DatabaseService databaseService, UploadReceiptService receiptService )
         {
             _fileUploadService = fileUploadService;
             _databaseService = databaseService;
+            _receiptService = receiptService;
             
         }
 
@@ -120,8 +122,9 @@ namespace Fileuploads.Controllers
             }
             catch (Exception ex)
             {
-                
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                Console.WriteLine($"Error uploading file: {ex.Message}");
+                Console.WriteLine($"Inner Exception: {ex.InnerException?.Message}"); // Print inner exception
+                return BadRequest($"Error uploading file: {ex.Message}");
             }
         }
 
@@ -175,6 +178,38 @@ namespace Fileuploads.Controllers
                 return BadRequest(new { message = $"An error occurred: {ex.Message}" });
             }
         }
+
+        [HttpPost("uploadReceipt")]
+        public async Task<IActionResult> UploadReceipt(string merchantId, string stan, string rrn, IFormFile receipt)
+        {
+            try
+            {
+                var filePath = await _receiptService.UploadReceiptAsync(merchantId, stan, rrn, receipt);
+                return Ok(filePath);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error uploading receipt: {ex.Message}");
+            }
+        }
+
+        [HttpGet("download-receipt/{merchantId}/{stan}/{rrn}")]
+        public async Task<IActionResult> DownloadReceipt(string merchantId, string stan, string rrn)
+        {
+            try
+            {
+                var (fileBytes, contentType) = await _receiptService.DownloadReceiptAsync(merchantId, stan, rrn);
+                var fileName = $"{stan}-{rrn}.pdf"; // Assuming the file name is constructed from stan and rrn
+                return File(fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception, e.g., return an error response
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error downloading receipt: {ex.Message}");
+            }
+        }
+
+
 
 
         [HttpPost("download/{fileName}")]

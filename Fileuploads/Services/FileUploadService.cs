@@ -16,12 +16,14 @@ namespace Fileuploads.Services
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly FileUploadDbContext _dbContext;
         private readonly ExcelDataService _excelDataService;
+        private readonly UploadReceiptService _uploadReceiptService;
 
-        public FileUploadService(IWebHostEnvironment webHostEnvironment, FileUploadDbContext dbContext, ExcelDataService excelDataService)
+        public FileUploadService(IWebHostEnvironment webHostEnvironment, FileUploadDbContext dbContext, ExcelDataService excelDataService, UploadReceiptService uploadReceiptService)
         {
             _webHostEnvironment = webHostEnvironment;
             _dbContext = dbContext;
             _excelDataService = excelDataService;
+            _uploadReceiptService = uploadReceiptService;
         }
 
         public async Task<(string, string, int, int)> UploadFileAsync(IFormFile file, String merchantId)
@@ -50,7 +52,7 @@ namespace Fileuploads.Services
                     await file.CopyToAsync(stream);
                 }
 
-                var (uploadedFiles, totalRows) = _excelDataService.ExtractDataFromExcel(filePath, merchantId);
+                var (uploadedFiles, totalRows) = _excelDataService.ExtractDataFromExcel(filePath, merchantId );
                 var distinctUploadedFiles = uploadedFiles.GroupBy(f => f.Stan).Select(g => g.First());
 
                 int skippedRowCount = 0;
@@ -96,7 +98,6 @@ namespace Fileuploads.Services
                 return (null, $"Error uploading file: {ex.Message}", 0, 0);
             }
         }
-
         public async Task<IEnumerable<UploadedFileInfo>> GetUploadedFileInfoAsync(String merchantId)
         {
             try
@@ -110,12 +111,15 @@ namespace Fileuploads.Services
                         TotalItems = GetTotalRowsInExcelFile(filePath),
                         UploadDate = File.GetCreationTimeUtc(filePath),
                         FileUrl = filePath,
-                        MerchantId = merchantId 
-                    });
+                        MerchantId = merchantId
+                    })
+                    .OrderByDescending(file => file.UploadDate); 
+
                 foreach (var uploadedFile in filesForMerchant)
                 {
                     _dbContext.UploadedFileInfos.Add(uploadedFile);
                 }
+
                 await _dbContext.SaveChangesAsync();
 
                 return filesForMerchant;

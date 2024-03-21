@@ -21,7 +21,7 @@ namespace Fileuploads.Services
 
         public async Task<IEnumerable<UploadedFile>> GetAllUploadedFilesAsync(String merchantId)
         {
-            return await _dbContext.UploadedFiles.Where(f => f.MerchantId == merchantId)
+            return await _dbContext.UploadedFiles.Where(f => f.MerchantId == merchantId).OrderByDescending(file => file.DateLogged)
             .ToListAsync();
         }
         public async Task<IEnumerable<UploadedFile>> GetAllFilesAsync()
@@ -34,7 +34,7 @@ namespace Fileuploads.Services
         public async Task<List<UploadedFileInfo>> GetUploadedFileInfoAsync(String merchantId)
         {
            
-            return await _dbContext.UploadedFileInfos.Where(f=>f.MerchantId==merchantId).ToListAsync();
+            return await _dbContext.UploadedFileInfos.Where(f=>f.MerchantId==merchantId).OrderByDescending(file => file.UploadDate).ToListAsync();
         }
 
         public async Task<object> GetDashboardData()

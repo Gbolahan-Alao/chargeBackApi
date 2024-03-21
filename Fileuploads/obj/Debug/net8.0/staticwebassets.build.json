@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "koAbhp2SU/N4mHR+UVowU46D17OgtPevXzqDt707UCk=",
+  "Hash": "x3+yiN+wxJaT2FGeC7jhX3/5q7l60TLmvUuKS+kZhRU=",
   "Source": "Fileuploads",
   "BasePath": "_content/Fileuploads",
   "Mode": "Default",
@@ -17,12 +17,12 @@
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 0501.xlsx",
+      "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\24th logged.xlsx",
       "SourceId": "Fileuploads",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\",
       "BasePath": "_content/Fileuploads",
-      "RelativePath": "uploads/Logged 0501.xlsx",
+      "RelativePath": "uploads/24th logged.xlsx",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -33,26 +33,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\uploads\\Logged 0501.xlsx"
-    },
-    {
-      "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901 (3).xlsx",
-      "SourceId": "Fileuploads",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\",
-      "BasePath": "_content/Fileuploads",
-      "RelativePath": "uploads/Logged 1901 (3).xlsx",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\uploads\\Logged 1901 (3).xlsx"
+      "OriginalItemSpec": "wwwroot\\uploads\\24th logged.xlsx"
     },
     {
       "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901.xlsx",
@@ -74,12 +55,12 @@
       "OriginalItemSpec": "wwwroot\\uploads\\Logged 1901.xlsx"
     },
     {
-      "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1912.xlsx",
+      "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Pending 2112.xlsx",
       "SourceId": "Fileuploads",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\",
       "BasePath": "_content/Fileuploads",
-      "RelativePath": "uploads/Logged 1912.xlsx",
+      "RelativePath": "uploads/Pending 2112.xlsx",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -90,26 +71,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\uploads\\Logged 1912.xlsx"
-    },
-    {
-      "Identity": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 2912.xlsx",
-      "SourceId": "Fileuploads",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\",
-      "BasePath": "_content/Fileuploads",
-      "RelativePath": "uploads/Logged 2912.xlsx",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\uploads\\Logged 2912.xlsx"
+      "OriginalItemSpec": "wwwroot\\uploads\\Pending 2112.xlsx"
     }
   ]
 }

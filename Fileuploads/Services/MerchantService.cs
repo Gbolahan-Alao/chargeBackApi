@@ -24,7 +24,7 @@ namespace Fileuploads.Services
 
         public async Task<List<Merchant>> GetMerchantsAsync()
         {
-            return await _dbContext.Merchants.ToListAsync();
+            return await _dbContext.Merchants.OrderBy(m=>m.SerialNumber).ToListAsync();
         }
 
         public async Task<Merchant> GetMerchantByIdAsync(Guid id)

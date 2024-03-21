@@ -9,6 +9,6 @@
         public string FileUrl { get; set; }
         public String MerchantId { get; set; }
         public int TotalFailed { get; set; }
-        public int TotalSuccessful {  get; set; }    
+        public int TotalSuccessful {  get; set; }
     }
 }

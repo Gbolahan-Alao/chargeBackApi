@@ -18,6 +18,7 @@ builder.Services.AddScoped<FileUploadService>();
 builder.Services.AddScoped<IMerchantService, MerchantService>();
 builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddScoped<ExcelDataService>();
+builder.Services.AddScoped<UploadReceiptService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
