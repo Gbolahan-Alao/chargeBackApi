@@ -1,8 +1,32 @@
 {
   "Files": [
     {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\receipts\\301452-240130301452.pdf",
+      "PackagePath": "staticwebassets\\receipts\\301452-240130301452.pdf"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\receipts\\728725-2468.pdf",
+      "PackagePath": "staticwebassets\\receipts\\728725-2468.pdf"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\receipts\\968700-240119968700.pdf",
+      "PackagePath": "staticwebassets\\receipts\\968700-240119968700.pdf"
+    },
+    {
       "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\24th logged.xlsx",
       "PackagePath": "staticwebassets\\uploads\\24th logged.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\LOGGED 06TH FEB.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\LOGGED 06TH FEB.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\LOGGED 30TH JANUARY.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\LOGGED 30TH JANUARY.xlsx"
+    },
+    {
+      "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\LOGGED 9TH FEB.xlsx",
+      "PackagePath": "staticwebassets\\uploads\\LOGGED 9TH FEB.xlsx"
     },
     {
       "Id": "C:\\Users\\alaog\\source\\repos\\PolarisChargeBackAuthIdentity\\Fileuploads\\wwwroot\\uploads\\Logged 1901.xlsx",

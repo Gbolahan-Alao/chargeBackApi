@@ -9,37 +9,44 @@ namespace Fileuploads.Services
 {
     public class ExcelDataService
     {
-        public (IEnumerable<UploadedFile>, int) ExtractDataFromExcel(string filePath, String merchantId)
+        public (IEnumerable<UploadedFile>, int) ExtractDataFromExcel(string filePath, string merchantId)
         {
             var uploadedData = new List<UploadedFile>();
             int totalRows = 0;
-            DateTime dateLogged = DateTime.UtcNow;
+            DateTime dateLoggedUtc = DateTime.UtcNow;
 
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
                 var worksheet = package.Workbook.Worksheets.FirstOrDefault();
                 if (worksheet != null)
                 {
-                    totalRows = worksheet.Dimension.End.Row - 1; 
+                    totalRows = worksheet.Dimension.End.Row - 1;
 
                     // Adding the actions column
                     worksheet.Cells[1, worksheet.Dimension.End.Column + 1].Value = "Actions";
 
                     for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
                     {
+                        var transactionDateValue = worksheet.Cells[row, 5]?.Value?.ToString();
+                        DateTime transactionDate;
+                        if (DateTime.TryParse(transactionDateValue, out transactionDate))
+                        {
+                            transactionDate = transactionDate.ToLocalTime(); 
+                        }
+
                         uploadedData.Add(new UploadedFile
                         {
-                            DateLogged = dateLogged,
+                            DateLogged = dateLoggedUtc,
                             MaskedPan = worksheet.Cells[row, 1]?.Value?.ToString(),
                             Rrn = worksheet.Cells[row, 2]?.Value?.ToString(),
                             Stan = worksheet.Cells[row, 3]?.Value?.ToString(),
                             TerminalId = worksheet.Cells[row, 4]?.Value?.ToString(),
-                            TransactionDate = DateTime.Parse(worksheet.Cells[row, 5]?.Value?.ToString()),
+                            TransactionDate = transactionDate, // Use converted local time
                             Amount = decimal.Parse(worksheet.Cells[row, 6]?.Value?.ToString()),
                             AccountToBeCredited = worksheet.Cells[row, 7]?.Value?.ToString(),
                             MerchantId = merchantId,
-                            Action = "None" // I set None as the initial value"
-                        }) ;
+                            Action = "None" // Action is set to none initially
+                        });
                         worksheet.Cells[row, worksheet.Dimension.End.Column].Value = "N/A";
                     }
                 }
@@ -47,5 +54,6 @@ namespace Fileuploads.Services
 
             return (uploadedData, totalRows);
         }
+
     }
 }
